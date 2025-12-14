@@ -29,16 +29,17 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# Step 1: Basic security (fail2ban only)
-echo -e "${GREEN}[1/4] Installing fail2ban...${NC}"
+# Step 1: System updates and fail2ban
+echo -e "${GREEN}[1/4] Updating system and installing fail2ban...${NC}"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
+apt-get upgrade -y
 apt-get install -y fail2ban
 
 systemctl enable fail2ban
 systemctl start fail2ban
 
-echo -e "${GREEN}✓ fail2ban installed and active${NC}"
+echo -e "${GREEN}✓ System updated and fail2ban active${NC}"
 
 # Step 2: Create user
 echo -e "${GREEN}[2/4] Creating $GAMESERVER_USER user...${NC}"
@@ -113,7 +114,7 @@ echo ""
 echo "Admin credentials:"
 echo "  Username: admin"
 echo "  Password: ChangeThisPassword123"
-echo "  CHANGE THIS PASSWORD!"
+echo "  CHANGE THIS PASSWORD"
 echo ""
 USEREOF
 
@@ -142,7 +143,7 @@ cat >> /root/.bashrc << 'BASHEOF'
 BASHEOF
 
 echo ""
-echo -e "${YELLOW}Admin credentials (CHANGE THESE!):${NC}"
+echo -e "${YELLOW}Admin credentials (CHANGE THESE):${NC}"
 echo "  Username: admin"
 echo "  Password: ChangeThisPassword123"
 echo ""
@@ -175,6 +176,12 @@ echo -e "${GREEN}Hardening SSH security...${NC}"
     # Change SSH port only (keep root login enabled for safety)
     sed -i "s/^#*Port .*/Port $SSH_PORT/" /etc/ssh/sshd_config
     
+    # Ubuntu 24.04 uses socket activation - disable it so sshd_config port takes effect
+    if systemctl is-enabled ssh.socket &>/dev/null; then
+        systemctl stop ssh.socket
+        systemctl disable ssh.socket
+    fi
+    
     # Configure fail2ban for new port
     cat > /etc/fail2ban/jail.local << 'F2BEOF'
 [sshd]
@@ -192,8 +199,9 @@ F2BEOF
     # Update firewall
     ufw allow $SSH_PORT/tcp comment 'SSH-Hardened'
     
-    # Restart SSH
-    systemctl restart sshd
+    # Restart SSH (Ubuntu 24.04 uses socket activation)
+    systemctl daemon-reload
+    systemctl restart ssh.socket
     
     echo ""
     echo -e "${GREEN}✓ SSH port changed to $SSH_PORT${NC}"
@@ -207,4 +215,3 @@ F2BEOF
     ufw delete allow 22/tcp
     echo -e "${GREEN}Done. This connection will drop. Reconnect on port $SSH_PORT${NC}"
     sleep 1
-
