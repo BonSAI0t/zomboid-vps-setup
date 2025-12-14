@@ -8,8 +8,8 @@
 # - For SSL: Domain name pointing to this server's IP
 #
 # Usage: 
-#   sudo ./optional-ssl-setup.sh                              # Install web-lgsm only
-#   sudo ./optional-ssl-setup.sh yourdomain.com your@email.com # Install web-lgsm + SSL
+#   sudo ./optional-web-lgsm-and-ssl-setup.sh                              # Install web-lgsm only
+#   sudo ./optional-web-lgsm-and-ssl-setup.sh yourdomain.com your@email.com # Install web-lgsm + SSL
 #
 
 set -e
