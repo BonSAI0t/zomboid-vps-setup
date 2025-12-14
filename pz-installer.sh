@@ -2,6 +2,10 @@
 # Project Zomboid Server - Ultra-Minimal Installer
 # Relies on LGSM to handle all dependencies
 # Works on Ubuntu 22.04 and 24.04
+#
+# Installation:
+# curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/pz-installer.sh | sudo bash
+#
 # Usage: sudo bash pz-installer.sh
 
 set -e
@@ -54,6 +58,13 @@ fi
 # Step 4: Give temporary full sudo for LGSM installation
 echo -e "${GREEN}[4/4] Installing LinuxGSM and Project Zomboid...${NC}"
 echo -e "${YELLOW}Granting temporary sudo for installation...${NC}"
+echo ""
+echo -e "${YELLOW}⚠️  IMPORTANT: SteamCMD Error is Normal${NC}"
+echo "You will see: 'Error! Installing pzserver: SteamCMD: Unknown error occurred'"
+echo "This is a known issue - ***IGNORE IT*** and just wait."
+echo "LGSM will auto-retry and it will work within 30-60 seconds."
+echo "Sit on your hands and count to 5 minutes if needed."
+echo ""
 echo "pzserver ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/pzserver-temp
 chmod 440 /etc/sudoers.d/pzserver-temp
 
@@ -137,6 +148,9 @@ echo "  Password: ChangeThisPassword123"
 echo ""
 echo -e "${YELLOW}Server details:${NC}"
 echo "  IP: $(curl -s ifconfig.me):16261"
+echo ""
+sleep 5
+echo ""
 echo -e "${YELLOW}================================================${NC}"
 echo -e "${YELLOW}SSH Security Hardening${NC}"
 echo -e "${YELLOW}================================================${NC}"
