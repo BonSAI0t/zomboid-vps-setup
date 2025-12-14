@@ -116,21 +116,20 @@ pzserver ALL=(ALL) NOPASSWD: /usr/bin/apt-get
 EOF
 chmod 440 /etc/sudoers.d/pzserver-lgsm
 
-echo ""
-echo -e "${GREEN}================================================${NC}"
-echo -e "${GREEN}Installation Complete!${NC}"
-echo -e "${GREEN}================================================${NC}"
-echo ""
-echo -e "${YELLOW}Switch to game server user:${NC}"
-echo "  su - $GAMESERVER_USER"
-echo ""
-echo -e "${YELLOW}Server commands:${NC}"
-echo "  ./pzserver start    - Start server"
-echo "  ./pzserver stop     - Stop server"
-echo "  ./pzserver restart  - Restart server"
-echo "  ./pzserver console  - Attach to console (Ctrl+B then D to detach)"
-echo "  ./pzserver details  - Server info"
-echo "  ./pzserver update   - Update server"
+# Add helpful info to root's bashrc
+cat >> /root/.bashrc << 'BASHEOF'
+
+# Project Zomboid Server Commands
+# Switch to game server user: su - pzserver
+# Then use:
+#   ./pzserver start    - Start server
+#   ./pzserver stop     - Stop server
+#   ./pzserver restart  - Restart server
+#   ./pzserver console  - Attach to console (Ctrl+B then D to detach)
+#   ./pzserver details  - Server info
+#   ./pzserver update   - Update server
+BASHEOF
+
 echo ""
 echo -e "${YELLOW}Admin credentials (CHANGE THESE!):${NC}"
 echo "  Username: admin"
@@ -139,17 +138,17 @@ echo ""
 echo -e "${YELLOW}Server details:${NC}"
 echo "  IP: $(curl -s ifconfig.me):16261"
 echo -e "${YELLOW}================================================${NC}"
-echo -e "${YELLOW}Optional: SSH Security Hardening${NC}"
+echo -e "${YELLOW}SSH Security Hardening${NC}"
 echo -e "${YELLOW}================================================${NC}"
 echo ""
-echo "Your server is running, but SSH is still on port 22 (vulnerable to bots)."
+echo -e "${YELLOW}⚠️  WARNING: SSH Port 22 Performance Issue${NC}"
 echo ""
-echo -e "${YELLOW}Note: If you're logged in as root and don't have another sudo user,${NC}"
-echo -e "${YELLOW}create one first to avoid lockout:${NC}"
-echo "  adduser yourusername"
-echo "  usermod -aG sudo yourusername"
+echo "Bots constantly scan the entire internet looking for open SSH ports."
+echo "They hammer port 22 with login attempts, which can cause severe lag."
 echo ""
-read -p "Would you like to harden SSH security now? (y/N): " -n 1 -r
+echo "Changing to port 2222 eliminates most of this noise."
+echo ""
+read -p "When you have finished reading the instructions above, enter y to continue: " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     SSH_PORT=2222
@@ -188,23 +187,10 @@ F2BEOF
     echo "Connect on port $SSH_PORT now in another terminal:"
     echo "  ssh -p $SSH_PORT $(whoami)@$(curl -s ifconfig.me)"
     echo ""
-    read -p "Type 'yes' when connected on port $SSH_PORT to close port 22: " -r
-    echo
-    if [[ $REPLY == "yes" ]]; then
-        ufw delete allow 22/tcp
-        echo ""
-        echo -e "${GREEN}Port 22 closed. This connection will drop.${NC}"
-        echo "Reconnect on port $SSH_PORT"
-    else
-        echo "Port 22 still open. Close it manually: sudo ufw delete allow 22/tcp"
-    fi
-else
+    read -p "Come back here and press Enter when successfully connected on port $SSH_PORT: " -r
     echo ""
-    echo -e "${YELLOW}SSH hardening skipped.${NC}"
-    echo -e "${YELLOW}You can harden SSH later by:${NC}"
-    echo "  1. Edit /etc/ssh/sshd_config (change Port to 2222)"
-    echo "  2. Update fail2ban config"
-    echo "  3. Update firewall rules"
-    echo "  4. Restart SSH: sudo systemctl restart sshd"
-    echo ""
+    echo -e "${GREEN}Closing port 22...${NC}"
+    ufw delete allow 22/tcp
+    echo -e "${GREEN}Done. This connection will drop. Reconnect on port $SSH_PORT${NC}"
+    sleep 1
 fi
