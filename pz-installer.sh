@@ -33,7 +33,7 @@ fi
 echo -e "${GREEN}[1/4] Updating system and installing fail2ban...${NC}"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get upgrade -y
+# apt-get upgrade -y
 apt-get install -y fail2ban
 
 systemctl enable fail2ban
@@ -92,13 +92,17 @@ echo "Installing server (LGSM will handle all dependencies)..."
 echo "Waiting for server to initialize..."
 LOG_FILE="$HOME/log/console/pzserver-console.log"
 
+echo "Waiting for password prompt..."
+
 timeout 180 bash -c '
 tail -f "$LOG_FILE" 2>/dev/null | while read line; do
     if echo "$line" | grep -q "Enter new administrator password:"; then
-        ./pzserver send "ChangeThisPassword123"
+		echo "Sending password first time..."
+		./pzserver send "ChangeThisPassword123"
         sleep 2
     fi
     if echo "$line" | grep -q "Confirm the password:"; then
+		echo "Sending password second time..."
         ./pzserver send "ChangeThisPassword123"
         sleep 2
         break
