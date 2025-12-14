@@ -7,6 +7,10 @@
 # - pz-installer.sh must be run first
 # - For SSL: Domain name pointing to this server's IP
 #
+# Installation:
+#   wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/optional-web-lgsm-and-ssl-setup.sh
+#   chmod +x optional-web-lgsm-and-ssl-setup.sh
+#
 # Usage: 
 #   sudo ./optional-web-lgsm-and-ssl-setup.sh                              # Install web-lgsm only
 #   sudo ./optional-web-lgsm-and-ssl-setup.sh yourdomain.com your@email.com # Install web-lgsm + SSL
