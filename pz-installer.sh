@@ -33,7 +33,7 @@ fi
 echo -e "${GREEN}[1/4] Updating system and installing fail2ban...${NC}"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-# apt-get upgrade -y
+apt-get upgrade -y
 apt-get install -y fail2ban
 
 systemctl enable fail2ban
