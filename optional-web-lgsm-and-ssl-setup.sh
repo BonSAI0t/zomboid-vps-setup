@@ -83,27 +83,68 @@ if ! id "pzserver" &>/dev/null; then
     exit 1
 fi
 
-# Step 1: Install web-lgsm
-echo -e "${GREEN}[1/3] Installing web-lgsm...${NC}"
+# Step 1: Install web-lgsm dependencies
+echo -e "${GREEN}[1/3] Installing dependencies...${NC}"
 
-su - pzserver << 'WEBLGSMEOF'
-# Clone web-lgsm
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+apt-get install -y python3-pip git
+
+# Step 2: Install web-lgsm
+echo -e "${GREEN}[2/3] Installing web-lgsm...${NC}"
+
+# Clone web-lgsm as pzserver user
+su - pzserver << 'CLONEEOF'
 if [ ! -d ~/web-lgsm ]; then
-    git clone https://github.com/BlueSquare23/web-lgsm.git ~/web-lgsm
+    git clone https://github.com/BlueSquare23/web-lgsm.git
+    echo "Web-LGSM cloned successfully"
+else
+    echo "web-lgsm directory already exists, skipping clone"
 fi
+CLONEEOF
 
+# Give pzserver temporary sudo access for installation
+echo "pzserver ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/pzserver-weblgsm-temp
+chmod 440 /etc/sudoers.d/pzserver-weblgsm-temp
+
+# Run web-lgsm installation as pzserver user (now has sudo)
+su - pzserver << 'INSTALLEOF'
 cd ~/web-lgsm
+bash install.sh
 
-# Install Python dependencies
-pip3 install --break-system-packages -r requirements.txt
+# Auto-add pzserver to web-lgsm database
+echo "Adding pzserver to web-lgsm..."
+/opt/web-lgsm/bin/python3 << 'PYEOF'
+import sys
+sys.path.insert(0, '/home/pzserver/web-lgsm')
+from app import main, db
+from app.models import GameServers
 
-echo ""
-echo "Web-LGSM installed"
-echo ""
-WEBLGSMEOF
+app = main()
+with app.app_context():
+    # Check if pzserver already exists
+    existing = GameServers.query.filter_by(name='pzserver').first()
+    if not existing:
+        server = GameServers(
+            name='pzserver',
+            install_loc='/home/pzserver',
+            game_name='Project Zomboid'
+        )
+        db.session.add(server)
+        db.session.commit()
+        print("✓ pzserver added to web-lgsm")
+    else:
+        print("✓ pzserver already in database")
+PYEOF
+INSTALLEOF
+
+# Remove temporary sudo access
+rm -f /etc/sudoers.d/pzserver-weblgsm-temp
+
+echo -e "${GREEN}Web-LGSM installation complete${NC}"
 
 # Create systemd service for web-lgsm
-echo -e "${GREEN}[2/3] Creating web-lgsm systemd service...${NC}"
+echo -e "${GREEN}[3/3] Creating web-lgsm systemd service...${NC}"
 
 cat > /etc/systemd/system/web-lgsm.service << 'SERVICEEOF'
 [Unit]
@@ -156,7 +197,7 @@ if [ "$SETUP_SSL" = false ]; then
 fi
 
 # Continue with SSL setup if domain provided
-echo -e "${GREEN}[3/3] Setting up SSL...${NC}"
+echo -e "${GREEN}[4/4] Setting up SSL...${NC}"
 
 # Check if domain resolves to this server
 echo -e "${YELLOW}[1/6] Checking DNS resolution...${NC}"
