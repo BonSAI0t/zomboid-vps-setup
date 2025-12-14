@@ -88,27 +88,22 @@ echo "Installing server (LGSM will handle all dependencies)..."
 # Start server to initialize database
 ./pzserver start
 
-# Wait for admin password prompt
-echo "Waiting for server to initialize..."
+# Wait for password prompt and send it
 LOG_FILE="$HOME/log/console/pzserver-console.log"
-
-echo "Waiting for password prompt..."
-
-timeout 180 bash -c '
-tail -f "$LOG_FILE" 2>/dev/null | while read line; do
-    if echo "$line" | grep -q "Enter new administrator password:"; then
-		echo "Sending password first time..."
-		./pzserver send "ChangeThisPassword123"
+timeout 120 bash -c "
+tail -f '$LOG_FILE' 2>/dev/null | while read line; do
+    if echo \"\$line\" | grep -q 'Enter new administrator password:'; then
+        ./pzserver send 'ChangeThisPassword123'
         sleep 2
     fi
-    if echo "$line" | grep -q "Confirm the password:"; then
-		echo "Sending password second time..."
-        ./pzserver send "ChangeThisPassword123"
+    if echo \"\$line\" | grep -q 'Confirm the password:'; then
+        ./pzserver send 'ChangeThisPassword123'
         sleep 2
         break
     fi
 done
-' || true
+" || true
+
 
 sleep 3
 
