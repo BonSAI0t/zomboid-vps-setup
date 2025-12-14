@@ -175,12 +175,6 @@ echo -e "${GREEN}Hardening SSH security...${NC}"
     # Change SSH port only (keep root login enabled for safety)
     sed -i "s/^#*Port .*/Port $SSH_PORT/" /etc/ssh/sshd_config
     
-    # Ubuntu 24.04 uses socket activation - disable it so sshd_config port takes effect
-    if systemctl is-enabled ssh.socket &>/dev/null; then
-        systemctl stop ssh.socket
-        systemctl disable ssh.socket
-    fi
-    
     # Configure fail2ban for new port
     cat > /etc/fail2ban/jail.local << 'F2BEOF'
 [sshd]
@@ -210,7 +204,7 @@ F2BEOF
     echo ""
     read -p "Come back here and press Enter when successfully connected on port $SSH_PORT: " -r
     echo ""
-    echo -e "${GREEN}Closing port 22...${NC}"
+    echo -e "${GREEN}Closing port 22 to new connections...${NC}"
     ufw delete allow 22/tcp
-    echo -e "${GREEN}Done. This connection will drop. Reconnect on port $SSH_PORT${NC}"
+    echo -e "${GREEN}Done. SSH active on $SSH_PORT${NC} to new connections"
     sleep 1
