@@ -2,6 +2,28 @@
 
 Automated setup script for running a Project Zomboid server on Ubuntu VPS (Tested on 24.04, should work on 22.04).
 
+## Foreword on security and responsibility
+This script does a couple of things insecurely.
+The core requirement of this script is to be a one touch zomboid install - you rent a VPS from somewhere, you remote in, you pull the script (see quick install), and then you get an IP and a port.
+Therefore - I've removed as much complexity as possible, in some cases this involves taking shortcuts - e.g. giving the pzserver user the ability to run commands as root until the server is up and running.
+My hope with this script is twofold:
+
+1. Minimize the amount of pain it takes to spin up a new zomboid server
+2. Lower the burden for people who want to try their hand at starting up a dedicated server outside the main providers.
+3. While there are some really great providers out there - E.g. shoutout indifferent broccoli - there's a few really good reasons to control your own VPS or hardware.
+- Game server providers are often at the mercy of dev cycles. A patch drops, everyone starts updating, performance across the board tanks.
+- Using a VPS insulates you somewhat from this as their market is much larger - they're serving a number of different clients so they don't often get hit by the stampede problems game providers do
+- If your VPS performance starts to tank, and you no longer trust your provider, it's really easy to migrate to a new provider - run the script on a new provider, stop the servers, then copy the Zomboid folder across. Done.
+
+With that in mind - feel free to take this and customize it how you like. Suggestions:
+
+1. Admin password should be set as a variable using a random number generator
+2. Consider adding SSH PubKey authentication for additional security - https://www.ssh.com/academy/ssh/public-key-authentication
+3. This install process could be wrapped in a screen terminal for remote installation resilience
+
+I'm sure there's more improvements but anyway, hope this helps.
+
+
 ## Quick Install
 
 ```bash
