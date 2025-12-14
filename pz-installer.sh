@@ -113,7 +113,7 @@ echo ""
 echo "Admin credentials:"
 echo "  Username: admin"
 echo "  Password: ChangeThisPassword123"
-echo "  ⚠️  CHANGE THIS PASSWORD!"
+echo "  CHANGE THIS PASSWORD!"
 echo ""
 USEREOF
 
@@ -155,19 +155,19 @@ echo -e "${YELLOW}================================================${NC}"
 echo -e "${YELLOW}SSH Security Hardening${NC}"
 echo -e "${YELLOW}================================================${NC}"
 echo ""
-echo -e "${YELLOW}⚠️  WARNING: SSH Port 22 Performance Issue${NC}"
+echo -e "${YELLOW}WARNING: SSH Port 22 Performance Issue${NC}"
 echo ""
 echo "Bots constantly scan the entire internet looking for open SSH ports."
 echo "They hammer port 22 with login attempts, which can cause severe lag."
 echo ""
 echo "Changing to port 2222 eliminates most of this noise."
 echo ""
-read -p "When you have finished reading the instructions above, enter y to continue: " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    SSH_PORT=2222
-    
-    echo -e "${GREEN}Hardening SSH security...${NC}"
+echo "Press Enter to continue with SSH hardening..."
+read -r
+echo ""
+SSH_PORT=2222
+
+echo -e "${GREEN}Hardening SSH security...${NC}"
     
     # Backup SSH config
     cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
@@ -207,4 +207,4 @@ F2BEOF
     ufw delete allow 22/tcp
     echo -e "${GREEN}Done. This connection will drop. Reconnect on port $SSH_PORT${NC}"
     sleep 1
-fi
+
