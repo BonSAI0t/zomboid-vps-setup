@@ -3,8 +3,10 @@
 # Relies on LGSM to handle all dependencies
 # Works on Ubuntu 22.04 and 24.04
 #
+# These scripts were made with LLM Chatbot AI Assistance (Claude)
+#
 # Installation:
-# curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/pz-installer.sh | sudo bash
+# curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/1-pz-installer.sh | sudo bash
 #
 # Usage: sudo bash pz-installer.sh
 

@@ -3,16 +3,18 @@
 # SSL Setup Script for Web-LGSM
 # Installs Nginx, sets up SSL with Let's Encrypt, and configures reverse proxy
 #
+# These scripts were made with LLM Chatbot AI Assistance (Claude)
+#
 # Prerequisites:
-# - testing-web-lgsm-setup-script.sh must be run first
+# - 2-web-lgsm-setup-script.sh must be run first
 # - Domain name pointing to this server's IP
 #
 # Installation:
-#   wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/testing-ssl-setup-script.sh
-#   chmod +x testing-ssl-setup-script.sh
+#   wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
+#   chmod +x 3-ssl-setup-script.sh
 #
 # Usage:
-#   sudo ./testing-ssl-setup-script.sh yourdomain.com your@email.com
+#   sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
 #
 
 set -e
@@ -70,7 +72,7 @@ fi
 # Verify web-lgsm is installed
 if [ ! -f /etc/systemd/system/web-lgsm.service ]; then
     echo -e "${RED}Error: web-lgsm service not found${NC}"
-    echo "Please run testing-web-lgsm-setup-script.sh first."
+    echo "Please run 2-web-lgsm-setup-script.sh first."
     exit 1
 fi
 

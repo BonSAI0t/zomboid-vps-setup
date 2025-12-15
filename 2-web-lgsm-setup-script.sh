@@ -3,15 +3,14 @@
 # Web-LGSM Setup Script (Testing Version)
 # Installs web-lgsm web interface for Project Zomboid server
 #
+# These scripts were made with LLM Chatbot AI Assistance (Claude)
+#
 # Prerequisites:
 # - pz-installer.sh must be run first
 #
 # Installation:
-#   wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/testing-web-lgsm-setup-script.sh
-#   chmod +x testing-web-lgsm-setup-script.sh
+#   curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/2-web-lgsm-setup-script.sh | bash
 #
-# Usage:
-#   sudo ./testing-web-lgsm-setup-script.sh
 #
 
 set -e
@@ -180,6 +179,15 @@ echo ""
 echo -e "${YELLOW}Security Note:${NC}"
 echo "  Web-LGSM is running on HTTP (not HTTPS)"
 echo "  Consider setting up SSL with Nginx for production use"
+echo ""
+echo -e "${YELLOW}Next Steps:${NC}"
+echo "  To secure your web-lgsm server (requires owning, borrowing a sub-domain"
+echo "  from a friend, or using something like free dynamicdns, and pointing it"
+echo "  to your server's IP), run the following commands:"
+echo ""
+echo "  wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh"
+echo "  chmod +x 3-ssl-setup-script.sh"
+echo "  sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com"
 echo ""
 echo -e "${YELLOW}Useful Commands:${NC}"
 echo "  sudo systemctl status web-lgsm     - Check service status"

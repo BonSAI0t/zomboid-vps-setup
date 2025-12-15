@@ -2,6 +2,8 @@
 
 Automated setup script for running a Project Zomboid server on Ubuntu VPS (Tested on 24.04, should work on 22.04).
 
+**Note:** These scripts and README were made with LLM Chatbot AI Assistance (Claude).
+
 ## Foreword on security and responsibility
 This script does a couple of things insecurely.
 The core requirement of this script is to be a one touch zomboid install - you rent a VPS from somewhere, you remote in, you pull the script (see quick install), and then you get an IP and a port.
@@ -26,11 +28,33 @@ I'm sure there's more improvements but anyway, hope this helps.
 
 ## Quick Install
 
+### Step 1: Install Project Zomboid Server
+
 ```bash
-curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/pz-installer.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/1-pz-installer.sh | sudo bash
 ```
 
 That's it. The script handles everything automatically.
+
+### Step 2 (Optional): Install Web-LGSM Web Interface
+
+```bash
+curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/2-web-lgsm-setup-script.sh | sudo bash
+```
+
+Access at: `http://YOUR_SERVER_IP:12357`
+
+### Step 3 (Optional): Secure Web-LGSM with SSL
+
+Requires a domain name pointed to your server IP.
+
+```bash
+wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
+chmod +x 3-ssl-setup-script.sh
+sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
+```
+
+Access at: `https://yourdomain.com`
 
 ## What It Does
 

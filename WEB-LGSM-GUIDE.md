@@ -1,5 +1,7 @@
 # Web-LGSM Quick Start Guide
 
+**Note:** These scripts and README were made with LLM Chatbot AI Assistance (Claude).
+
 ## What is Web-LGSM?
 
 Web-LGSM is a web-based management interface for LinuxGSM servers. It provides an easy-to-use dashboard for managing your game servers through your browser instead of the command line.
@@ -15,18 +17,20 @@ Web-LGSM is a web-based management interface for LinuxGSM servers. It provides a
 
 ## Installation
 
-Web-LGSM is installed using the optional-web-lgsm-and-ssl-setup.sh script:
+### Step 1: Install Web-LGSM (HTTP)
 
 ```bash
-# Download the script
-wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/optional-web-lgsm-and-ssl-setup.sh
-chmod +x optional-web-lgsm-and-ssl-setup.sh
+curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/2-web-lgsm-setup-script.sh | sudo bash
+```
 
-# Install web-lgsm only (HTTP)
-sudo ./optional-web-lgsm-and-ssl-setup.sh
+### Step 2 (Optional): Add SSL/HTTPS
 
-# Or install web-lgsm with SSL (HTTPS)
-sudo ./optional-web-lgsm-and-ssl-setup.sh yourdomain.com your@email.com
+If you want to secure your web-lgsm with SSL (requires a domain name):
+
+```bash
+wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
+chmod +x 3-ssl-setup-script.sh
+sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
 ```
 
 After installation, access web-lgsm at:
@@ -173,10 +177,12 @@ If you ran the script without SSL, web-LGSM runs on plain HTTP. This is fine for
 
 ### Adding SSL Later
 
-You can add SSL at any time by running the setup script again with your domain and email:
+You can add SSL at any time by running the SSL setup script with your domain and email:
 
 ```bash
-sudo ./optional-web-lgsm-and-ssl-setup.sh yourdomain.com your@email.com
+wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
+chmod +x 3-ssl-setup-script.sh
+sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
 ```
 
 This will:
@@ -190,7 +196,9 @@ This will:
 
 **Option 1: Use the SSL Setup Script (Recommended)**
 ```bash
-sudo ./optional-web-lgsm-and-ssl-setup.sh yourdomain.com your@email.com
+wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
+chmod +x 3-ssl-setup-script.sh
+sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
 ```
 
 **Option 2: VPN Access**
@@ -203,7 +211,7 @@ If you prefer to configure manually, see the Nginx example below.
 
 ### Manual Nginx Reverse Proxy Example
 
-**Note:** The optional-web-lgsm-and-ssl-setup.sh script does all of this automatically. This is only if you want to configure manually.
+**Note:** The 3-ssl-setup-script.sh script does all of this automatically. This is only if you want to configure manually.
 
 ```nginx
 server {
