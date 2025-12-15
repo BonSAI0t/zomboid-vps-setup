@@ -28,44 +28,61 @@ I'm sure there's more improvements but anyway, hope this helps.
 
 ## Quick Install
 
-### Step 1: Install Project Zomboid Server
+### One Command - Complete Setup
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/1-pz-installer.sh | sudo bash
 ```
 
-That's it. The script handles everything automatically.
+**This installs everything:**
+- Project Zomboid server (Build 42/unstable)
+- Web-LGSM management interface with HTTPS
+- Nginx reverse proxy with self-signed SSL
+- Fail2ban protection (SSH + Web)
+- Hardened SSH on port 2222
 
-### Step 2 (Optional): Install Web-LGSM Web Interface
+**Access:**
+- Game: `YOUR_SERVER_IP:16261`
+- Web: `https://YOUR_SERVER_IP` (accept browser warning)
+
+### Optional: Upgrade to Let's Encrypt
+
+If you have a domain name, get a verified SSL certificate (no browser warnings):
+
+```bash
+wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-upgrade-to-letsencrypt.sh
+chmod +x 3-upgrade-to-letsencrypt.sh
+sudo ./3-upgrade-to-letsencrypt.sh yourdomain.com your@email.com
+```
+
+Access at: `https://yourdomain.com` (verified, no warnings)
+
+### Standalone Web-LGSM Install
+
+If you already have a game server and just want to add web management:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/2-web-lgsm-setup-script.sh | sudo bash
 ```
 
-Access at: `http://YOUR_SERVER_IP:12357`
-
-### Step 3 (Optional): Secure Web-LGSM with SSL
-
-Requires a domain name pointed to your server IP.
-
-```bash
-wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
-chmod +x 3-ssl-setup-script.sh
-sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
-```
-
-Access at: `https://yourdomain.com`
-
 ## What It Does
 
+### Game Server Setup
 1. Updates system packages
-2. Installs and configures fail2ban for ssh attempts
+2. Installs and configures fail2ban for SSH protection
 3. Creates dedicated `pzserver` user
 4. Installs LinuxGSM and all dependencies
 5. Installs Project Zomboid server (unstable branch/B42)
 6. Auto-creates admin account with default password
-7. Configures firewall (game ports + SSH)
-8. **Hardens SSH security** (moves SSH to port 2222 to prevent bot lag)
+7. **Hardens SSH security** (moves SSH to port 2222 to prevent bot lag)
+
+### Web Management Setup
+8. Installs Web-LGSM dashboard (browser-based server control)
+9. Installs Nginx reverse proxy
+10. Generates self-signed SSL certificate for HTTPS
+11. Configures Nginx with security headers and WebSocket support
+12. Adds fail2ban protection for web interface (auth attempts, rate limiting, bot scanning)
+13. Configures firewall (game ports 16261-16262, SSH 2222, HTTP/HTTPS 80/443)
 
 ## Post-Installation
 

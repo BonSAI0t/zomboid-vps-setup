@@ -17,33 +17,29 @@ Web-LGSM is a web-based management interface for LinuxGSM servers. It provides a
 
 ## Installation
 
-### Step 1: Install Web-LGSM (HTTP)
+### Step 1: Install Web-LGSM with HTTPS (Self-Signed)
+
+This automatically installs web-lgsm with Nginx reverse proxy and HTTPS encryption using a self-signed certificate:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/2-web-lgsm-setup-script.sh | sudo bash
 ```
 
-### Step 2 (Optional): Add SSL/HTTPS
+Access web-lgsm at: `https://YOUR_SERVER_IP`
 
-If you want to secure your web-lgsm with SSL (requires a domain name):
+**Note:** Your browser will show a security warning because the certificate is self-signed. This is expected and safe to bypass.
+
+### Step 2 (Optional): Upgrade to Let's Encrypt
+
+If you have a domain name pointed to your server, you can upgrade to a verified SSL certificate (no browser warnings):
 
 ```bash
-wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
-chmod +x 3-ssl-setup-script.sh
-sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
+wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-upgrade-to-letsencrypt.sh
+chmod +x 3-upgrade-to-letsencrypt.sh
+sudo ./3-upgrade-to-letsencrypt.sh yourdomain.com your@email.com
 ```
 
-After installation, access web-lgsm at:
-
-**Without SSL:**
-```
-http://YOUR_SERVER_IP:12357
-```
-
-**With SSL:**
-```
-https://yourdomain.com
-```
+Access at: `https://yourdomain.com` (verified, no warnings)
 
 ## First Time Setup
 
@@ -51,21 +47,31 @@ https://yourdomain.com
 
 Open your browser and navigate to:
 ```
-http://YOUR_SERVER_IP:12357
+https://YOUR_SERVER_IP
 ```
 
-### 2. Create Admin Account
+### 2. Accept the Self-Signed Certificate Warning
+
+Since you're using a self-signed certificate, your browser will show a security warning:
+
+- **Chrome/Edge**: Click "Advanced" → "Proceed to [your IP] (unsafe)"
+- **Firefox**: Click "Advanced" → "Accept the Risk and Continue"
+- **Safari**: Click "Show Details" → "visit this website"
+
+This is normal and safe. The connection is still encrypted.
+
+### 3. Create Admin Account
 
 On first access, you'll see a setup page:
 - Enter desired username
 - Create a strong password
 - Click "Create Account"
 
-### 3. Login
+### 4. Login
 
 After account creation, you'll be automatically logged in and redirected to the dashboard.
 
-### 4. Your Server Should Appear
+### 5. Your Server Should Appear
 
 If you installed Project Zomboid using the script, it should automatically appear in the web-lgsm interface under "Installed Servers".
 
@@ -168,50 +174,57 @@ sudo systemctl restart web-lgsm
 
 ## Security Considerations
 
-### Default Setup (HTTP Only)
+### Default Setup (Self-Signed HTTPS)
 
-If you ran the script without SSL, web-LGSM runs on plain HTTP. This is fine for:
-- Local network access only
+By default, the installation script sets up HTTPS with a self-signed certificate, providing:
+
+✅ **Encrypted Traffic** - All passwords, commands, and data are encrypted
+✅ **Protection from Eavesdropping** - Network sniffers can't read your traffic
+✅ **Session Security** - Cookies and sessions are protected
+⚠️ **Browser Warnings** - You'll need to accept the certificate warning each visit
+
+This is suitable for:
+- Most use cases where you don't have a domain
 - Testing and development
+- Private server access
 - VPN-only access
 
-### Adding SSL Later
+### Upgrading to Let's Encrypt (Verified SSL)
 
-You can add SSL at any time by running the SSL setup script with your domain and email:
+For public-facing servers with a domain name, upgrade to Let's Encrypt for a verified certificate:
 
 ```bash
-wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
-chmod +x 3-ssl-setup-script.sh
-sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
+wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-upgrade-to-letsencrypt.sh
+chmod +x 3-upgrade-to-letsencrypt.sh
+sudo ./3-upgrade-to-letsencrypt.sh yourdomain.com your@email.com
 ```
 
 This will:
-- Install Nginx reverse proxy
-- Obtain free SSL certificate from Let's Encrypt
-- Configure auto-renewal
-- Redirect HTTP to HTTPS
-- Block direct access to port 12357
+- Replace the self-signed certificate with Let's Encrypt
+- Eliminate browser security warnings
+- Provide verified, trusted SSL
+- Configure automatic certificate renewal
+- Update Nginx configuration for your domain
 
-### For Remote/Public Access
+### Security Comparison
 
-**Option 1: Use the SSL Setup Script (Recommended)**
-```bash
-wget https://raw.githubusercontent.com/BonSAI0t/zomboid-vps-setup/main/3-ssl-setup-script.sh
-chmod +x 3-ssl-setup-script.sh
-sudo ./3-ssl-setup-script.sh yourdomain.com your@email.com
-```
+| Setup | Encryption | Browser Warnings | Verification | Best For |
+|-------|-----------|------------------|--------------|----------|
+| Self-Signed SSL (default) | ✅ Yes | ⚠️ Yes | ❌ No | Most users, no domain needed |
+| Let's Encrypt | ✅ Yes | ✅ No | ✅ Yes | Public servers with domains |
+| VPN Only | ✅ Yes (via VPN) | ✅ No | ✅ Yes | Advanced users |
 
-**Option 2: VPN Access**
+### Alternative: VPN Access
+
+**Option: VPN-Only Access**
 - Set up WireGuard, OpenVPN, or similar
-- Access web-lgsm through VPN
-- Keep port 12357 firewalled from internet
-
-**Option 3: Manual Reverse Proxy with SSL**
-If you prefer to configure manually, see the Nginx example below.
+- Access web-lgsm through VPN tunnel
+- Keep web ports firewalled from internet
+- Most secure option but requires VPN setup
 
 ### Manual Nginx Reverse Proxy Example
 
-**Note:** The 3-ssl-setup-script.sh script does all of this automatically. This is only if you want to configure manually.
+**Note:** The 2-web-lgsm-setup-script.sh script does all of this automatically. This is only if you want to configure manually.
 
 ```nginx
 server {
